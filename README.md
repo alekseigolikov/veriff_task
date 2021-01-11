@@ -20,4 +20,4 @@ Task to create
 ## Procedure of clustering
 * importing data into **veriff.input_data** table
 * running **veriff.clustering_do()** function
-* running **clustering_get(int)** for requered ammount of clusters
+* running **clustering_get(int)** for requered ammount of clusters (passing null value you can query list of all clusters on all steps of clustering)
