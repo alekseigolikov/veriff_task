@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION veriff.clustering_get (
  ) RETURNS SETOF record AS
 $BODY$
 -- ----------------------------------------------------------------------
--- Function: clustering_get(0)
+-- Function: clustering_get(1)
 --
 -- Function returns requested ammount of clusters
 --
@@ -24,10 +24,9 @@ $BODY$
 --    200 - requested number of clusters found
 --    405 - requested ammount of clusters was not found
 --    404 - no input data found
---    403 - invalid input
 --
 -- Example:
--- select * from veriff.clustering_get(3)
+-- select * from veriff.clustering_get(1)
 -- ----------------------------------------------------------------------
 
 DECLARE
@@ -36,11 +35,15 @@ DECLARE
 BEGIN
 
     IF i_cluster_count is NULL THEN
-        status = 403;
-        status_text = 'Invalid input';
-        clusters = Null;
+        FOR status, status_text, pass, clusters IN
+        SELECT 200, 'OK', a.pass, a.vector_a
+        FROM veriff.distance_matrix a
+        WHERE a.vector_b = a.vector_a
+        ORDER BY pass, clusters
+    LOOP
         RETURN NEXT;
-        RETURN;
+    END LOOP;
+
     END IF;
 
     SELECT count(*) from veriff.distance_matrix INTO _count;
